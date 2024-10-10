@@ -11,6 +11,36 @@ function getNeighbors(row, col, matrix) {
   // Return neighbors
   
   // Your code here
+  let neighbors = [];
+  let numRows = matrix.length;
+  let numCols = matrix[0].length;
+  let directions = [
+    [-1, 0], // top
+    [-1, 1], // top right
+    [0, 1], // right
+    [1, 1], // bottom right
+    [1, 0], // bottom
+    [1, -1], // bottom left
+    [0, -1], // left
+    [-1, -1], // top left
+  ];
+
+  for (let [dRow, dCol] of directions) {
+    let newRow = row + dRow;
+    let newCol = col + dCol;
+    if (
+      newRow >= 0 &&
+      newRow < numRows &&
+      newCol >= 0 &&
+      newCol < numCols &&
+      matrix[newRow][newCol] === 1
+    ) {
+      neighbors.push([newRow, newCol]);
+    }
+  }
+
+  return neighbors;
+
 }
 
 function countIslands(matrix) {
@@ -33,6 +63,34 @@ function countIslands(matrix) {
   // Return island count
   
   // Your code here
+  let visited = new Set();
+  let count = 0;
+  let numRows = matrix.length;
+  let numCols = matrix[0].length;
+
+  for (let row = 0; row < numRows; row++) {
+    for (let col = 0; col < numCols; col++) {
+      if (matrix[row][col] === 1 && !visited.has(`${row},${col}`)) {
+        count++;
+        let stack = [[row, col]];
+        visited.add(`${row},${col}`);
+
+        while (stack.length > 0) {
+          let [currentRow, currentCol] = stack.pop();
+          let neighbors = getNeighbors(currentRow, currentCol, matrix);
+
+          for (let [neighborRow, neighborCol] of neighbors) {
+            if (!visited.has(`${neighborRow},${neighborCol}`)) {
+              stack.push([neighborRow, neighborCol]);
+              visited.add(`${neighborRow},${neighborCol}`);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return count;
 }
 
 // Uncomment the lines below for local testing
